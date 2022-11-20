@@ -4,4 +4,9 @@
 - user bikin income/expense category
 - user bikin income/expense (update ke wallet dan get wallet)
 - get transaction selama periode tertentu
-- 
+
+
+20/11
+- belom ad category di income
+- gabungin transaction income sama expense
+- api di atas udah semua
