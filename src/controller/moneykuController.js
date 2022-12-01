@@ -131,6 +131,16 @@ async function getExpenseByWallet (req, res){
     }
 }
 
+async function getAccountDetail (req, res){
+    try{
+        const result = await moneykuService.getAccountDetail(req.query.idUser);
+        res.json(result)
+    }
+    catch (err){
+        res.json (err.detail)
+    }
+}
+
 
 module.exports = {
     register,
@@ -145,5 +155,6 @@ module.exports = {
     getAllTransaction,
     getWallet,
     getIncomeByWallet,
-    getExpenseByWallet
+    getExpenseByWallet,
+    getAccountDetail
 }

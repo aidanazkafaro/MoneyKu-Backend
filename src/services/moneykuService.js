@@ -36,11 +36,12 @@ async function login(body) {
   } else {
     const user = result.rows[0];
     if (await security.comparePassword(password, user.password)) {
-      const token = jwt.sign({ idUser: user.idUser }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ idUser: user.id }, process.env.JWT_SECRET, {
         expiresIn: "30d",
       });
       return {
         message: "Login successful",
+        idUser: user.id,
         token: token,
       };
     } else {
@@ -74,6 +75,25 @@ async function createIncomeCategory(body) {
   if (result.rowCount !== 0) {
     return {
       message: "Income Category Created",
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
+async function getAccountDetail(body){
+  const idUser  = body;
+  console.log(idUser);
+  const query = `SELECT name, balance from account where id =${idUser}`;
+  console.log(query)
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    console.log("Name:", result.rows[0])
+    return {
+      name: result.rows[0].name,
+      balance: result.rows[0].balance,
     };
   } else {
     return {
@@ -260,5 +280,6 @@ module.exports = {
   getAllTransaction,
   getWallet,
   getIncomeByWallet,
-  getExpenseByWallet
+  getExpenseByWallet,
+  getAccountDetail
 };
