@@ -86,14 +86,19 @@ async function createIncomeCategory(body) {
 async function getAccountDetail(body){
   const idUser  = body;
   console.log(idUser);
-  const query = `SELECT name, balance from account where id =${idUser}`;
+  const query = `SELECT account.name, account.balance from account where account.id =${idUser};`;
+  const query2 = `SELECT wallet.id as idWallet, wallet.name as nameWallet, wallet.balance as balanceWallet
+  from account inner join wallet on wallet.idUser = account.id where wallet.idUser =${idUser};`
   console.log(query)
   const result = await db.query(query);
+  const result2 = await db.query(query2)
+  console.log(result2)
   if (result.rowCount !== 0) {
-    console.log("Name:", result.rows[0])
+    console.log("Name:", result2.rows)
     return {
       name: result.rows[0].name,
       balance: result.rows[0].balance,
+      wallet: result2.rows,
     };
   } else {
     return {
