@@ -2,6 +2,7 @@ const e = require("express");
 const db = require("../config/config");
 const jwt = require("jsonwebtoken");
 const security = require ("../utils/security")
+const bcrypt = require ("bcryptjs")
 
 async function register(body) {
   const { name, email, password } = body;
@@ -34,7 +35,7 @@ async function login(body) {
     };
   } else {
     const user = result.rows[0];
-    if (security.comparePassword(password, user.password)) {
+    if (await security.comparePassword(password, user.password)) {
       const token = jwt.sign({ idUser: user.idUser }, process.env.JWT_SECRET, {
         expiresIn: "30d",
       });
