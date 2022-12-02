@@ -16,5 +16,7 @@ router.get  ('/getWallet', moneykuController.getWallet);
 router.get  ('/getIncomeByWallet', moneykuController.getIncomeByWallet);
 router.get  ('/getExpenseByWallet', moneykuController.getExpenseByWallet);
 router.get  ('/getAccountDetail', moneykuController.getAccountDetail);
+router.get  ('/getCategory', moneykuController.getCategory);
+
 
 module.exports = router;

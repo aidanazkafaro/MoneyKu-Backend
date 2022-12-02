@@ -118,9 +118,9 @@ async function createExpenseCategory(body) {
 }
 
 async function createIncome(body) {
-  const { amount, transactionDate, idUser, incomeCategory, idWallet } = body;
-  const query = `INSERT INTO income (amount, transactionDate, idUser, incomeCategory, idWallet) 
-                 VALUES ('${amount}','${transactionDate}', '${idUser}','${incomeCategory}','${idWallet}' ); 
+  const { amount, transactionDate, idUser, category, description, idWallet } = body;
+  const query = `INSERT INTO income (amount, transactionDate, idUser, category, idWallet, description) 
+                 VALUES ('${amount}','${transactionDate}', '${idUser}','${category}','${idWallet}','${description}' ); 
                    UPDATE wallet set balance = balance + '${amount}' where id = ${idWallet};
                    UPDATE account set balance = balance + '${amount}' where id = ${idUser}`;
   const result = await db.query(query);
@@ -140,9 +140,9 @@ async function createIncome(body) {
 }
 
 async function createExpense(body) {
-  const { amount, transactionDate, idUser, expenseCategory, idWallet } = body;
-  const query = `INSERT INTO expense (amount, transactionDate, idUser, expenseCategory, idWallet) 
-                 VALUES ('${amount}','${transactionDate}', '${idUser}', '${expenseCategory}','${idWallet}' ); 
+  const { amount, transactionDate, idUser, category, idWallet, description } = body;
+  const query = `INSERT INTO expense (amount, transactionDate, idUser, category, idWallet, description) 
+                 VALUES ('${amount}','${transactionDate}', '${idUser}', '${category}','${idWallet}','${description}' ); 
                    UPDATE wallet set balance = balance - '${amount}' where idUser = ${idUser};
                    UPDATE account set balance = balance - '${amount}' where id = ${idUser}`;
   const result = await db.query(query);
@@ -163,9 +163,10 @@ async function createExpense(body) {
 
 async function getIncome(body) {
   const { idUser, dateBefore, dateAfter} = body;
-  const query = `select incomeCategory.category, amount, wallet.name, transactiondate from income inner join wallet on 
-                 income.idwallet = wallet.id inner join incomecategory on incomecategory.id = income.incomecategory
+  const query = `select category.category, amount, wallet.name, transactiondate, description from income inner join wallet on 
+                 income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' ;`
+  console.log(query)
   const result = await db.query(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows
@@ -181,8 +182,8 @@ async function getIncome(body) {
 
 async function getExpense(body) {
   const { idUser, dateBefore, dateAfter } = body;
-  const query = `select expensecategory.category, amount, wallet.name, transactiondate from expense inner join wallet on 
-                 expense.idwallet = wallet.id inner join expensecategory on expensecategory.id = income.expensecategory
+  const query = `select category.category, amount, wallet.name, transactiondate, description from expense inner join wallet on 
+                 expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' ;`
   const result = await db.query(query);
   if (result.rowCount !== 0) {
@@ -232,8 +233,8 @@ async function getWallet(body){
 
 async function getIncomeByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet} = body;
-  const query = `select incomeCategory.category, amount, wallet.name, transactiondate from income inner join wallet on 
-                 income.idwallet = wallet.id inner join incomecategory on incomecategory.id = income.incomecategory
+  const query = `select category.category, amount, wallet.name, transactiondate, description from income inner join wallet on 
+                 income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND income.idWallet ='${idWallet}' ;`
   const result = await db.query(query);
   if (result.rowCount !== 0) {
@@ -250,9 +251,24 @@ async function getIncomeByWallet(body) {
 
 async function getExpenseByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet } = body;
-  const query = `select expensecategory.category, amount, wallet.name, transactiondate from expense inner join wallet on 
-                 expense.idwallet = wallet.id inner join expensecategory on expensecategory.id = income.expensecategory
+  const query = `select category.category, amount, wallet.name, transactiondate, description from expense inner join wallet on 
+                 expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND expense.idWallet ='${idWallet}' ;`
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows
+    return {
+      queryResult ,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
+async function getCategory (){
+  const query = `select * from category;`
   const result = await db.query(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows
@@ -281,5 +297,6 @@ module.exports = {
   getWallet,
   getIncomeByWallet,
   getExpenseByWallet,
-  getAccountDetail
+  getAccountDetail,
+  getCategory
 };
