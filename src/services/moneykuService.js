@@ -143,8 +143,8 @@ async function createExpense(body) {
   const { amount, transactionDate, idUser, category, idWallet, description } = body;
   const query = `INSERT INTO expense (amount, transactionDate, idUser, category, idWallet, description) 
                  VALUES ('${amount}','${transactionDate}', '${idUser}', '${category}','${idWallet}','${description}' ); 
-                   UPDATE wallet set balance = balance - '${amount}' where idUser = ${idUser};
-                   UPDATE account set balance = balance - '${amount}' where id = ${idUser}`;
+                 UPDATE wallet set balance = balance - '${amount}' where id = ${idWallet};
+                 UPDATE account set balance = balance - '${amount}' where id = ${idUser}`;
   const result = await db.query(query);
   if (
     result[0].rowCount !== 0 &&

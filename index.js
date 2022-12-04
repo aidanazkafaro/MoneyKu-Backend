@@ -1,4 +1,4 @@
-const express = require('express')
+ const express = require('express')
 const db = require ('./src/config/config')
 const app = express()
 const bp = require('body-parser')
