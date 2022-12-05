@@ -8,7 +8,7 @@ app.use(bp.urlencoded({ extended: true }))
 require('dotenv').config();
 app.use('/moneyku', moneykuRoute)
 
-app.listen(1234, () => {
-    console.log("Port 1234 berhasil dijalankan")
+app.listen(8080 || process.env.port, () => {
+    console.log("Port berhasil dijalankan")
 })
 
