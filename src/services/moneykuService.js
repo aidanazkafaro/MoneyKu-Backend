@@ -222,6 +222,28 @@ async function getAllTransaction(body) {
   }
 }
 
+async function getRecentTransaction(body) {
+  const idUser = body;
+  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
+                 where income.idUser = '${idUser}' UNION
+                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
+                 where expense.idUser = '${idUser}' LIMIT 5 ;`;
+  console.log(query);
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
 async function getWallet(body) {
   const { idUser } = body;
   const query = `SELECT * FROM WALLET WHERE idUser = '${idUser}`;
@@ -319,6 +341,7 @@ module.exports = {
   createExpenseCategory,
   createIncome,
   createExpense,
+  getRecentTransaction,
   getIncome,
   getExpense,
   getAllTransaction,
