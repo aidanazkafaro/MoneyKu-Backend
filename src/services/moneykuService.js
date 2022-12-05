@@ -275,6 +275,27 @@ async function getExpenseByWallet(body) {
   }
 }
 
+async function getAllTransactionByWallet(body) {
+  const { idUser, dateBefore, dateAfter, idWallet } = body;
+  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from income inner join wallet on 
+                 income.idwallet = wallet.id inner join category on category.id = income.category
+                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND income.idWallet ='${idWallet}' UNION
+                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from expense inner join wallet on 
+                 expense.idwallet = wallet.id inner join category on category.id = expense.category
+                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' AND expense.idWallet ='${idWallet}';`;
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
 async function getCategory() {
   const query = `select * from category;`;
   const result = await db.query(query);
@@ -304,6 +325,7 @@ module.exports = {
   getWallet,
   getIncomeByWallet,
   getExpenseByWallet,
+  getAllTransactionByWallet,
   getAccountDetail,
   getCategory,
 };
