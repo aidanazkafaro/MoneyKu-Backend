@@ -257,8 +257,9 @@ async function getExpenseByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet } = body;
   const query = `select category.category, amount, wallet.name, transactiondate, description from expense inner join wallet on 
                  expense.idwallet = wallet.id inner join category on category.id = expense.category
-                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND expense.idWallet ='${idWallet}' ;`;
+                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' AND expense.idWallet ='${idWallet}' ;`;
   const result = await db.query(query);
+  console.log(result);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
     return {
