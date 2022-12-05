@@ -91,7 +91,7 @@ async function getExpense(req, res) {
 
 async function getAllTransaction(req, res) {
   try {
-    const result = await moneykuService.getAllTransaction(req.body);
+    const result = await moneykuService.getAllTransaction(req.query);
     res.json(result);
   } catch (err) {
     res.json(err.detail);
@@ -127,7 +127,16 @@ async function getExpenseByWallet(req, res) {
 
 async function getAllTransactionByWallet(req, res) {
   try {
-    const result = await moneykuService.getAllTransactionByWallet(req.body);
+    const result = await moneykuService.getAllTransactionByWallet(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
+
+async function getRecentTransaction(req, res) {
+  try {
+    const result = await moneykuService.getRecentTransaction(req.query.idUser);
     res.json(result);
   } catch (err) {
     res.json(err.detail);
@@ -164,6 +173,7 @@ module.exports = {
   getIncome,
   getExpense,
   getAllTransaction,
+  getRecentTransaction,
   getWallet,
   getIncomeByWallet,
   getExpenseByWallet,
