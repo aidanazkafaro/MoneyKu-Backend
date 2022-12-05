@@ -121,8 +121,16 @@ async function createExpenseCategory(body) {
 async function createIncome(body) {
   const { amount, transactionDate, idUser, category, description, idWallet } =
     body;
+
+    if(amount <= 0 || category == '' || idWallet == ''){
+      return {
+        message: "Error",
+      };
+    }
+
   const query = `INSERT INTO income (amount, transactionDate, idUser, category, idWallet, description, transactionCategory) 
                  VALUES ('${amount}','${transactionDate}', '${idUser}','${category}','${idWallet}','${description}', 'income' ); 
+
                    UPDATE wallet set balance = balance + '${amount}' where id = ${idWallet};
                    UPDATE account set balance = balance + '${amount}' where id = ${idUser}`;
   const result = await db.query(query);
@@ -144,15 +152,23 @@ async function createIncome(body) {
 async function createExpense(body) {
   const { amount, transactionDate, idUser, category, idWallet, description } =
     body;
+
+    if(amount <= 0 || category == '' || idWallet == ''){
+      return {
+        message: "Error",
+      };
+    }
+
   const query = `INSERT INTO expense (amount, transactionDate, idUser, category, idWallet, description, transactionCategory) 
                  VALUES ('${amount}','${transactionDate}', '${idUser}', '${category}','${idWallet}','${description}', 'expense' ); 
+
                  UPDATE wallet set balance = balance - '${amount}' where id = ${idWallet};
                  UPDATE account set balance = balance - '${amount}' where id = ${idUser}`;
   const result = await db.query(query);
   if (
     result[0].rowCount !== 0 &&
     result[1].rowCount !== 0 &&
-    result[2].rowCount !== 0
+    result[2].rowCount !== 0 
   ) {
     return {
       result,
