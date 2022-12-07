@@ -97,6 +97,15 @@ async function getAccountDetail(body) {
       wallet: result[1].rows,
     };
   } else {
+    const query = `SELECT account.name, account.balance from account where account.id =${idUser};`;
+    const result = await db.query(query);
+    if (result.rowCount !== 0){
+      return{
+        name: result.rows[0].name,
+        balance: result.rows[0].balance,
+        wallet: ''
+      }
+    }
     return {
       message: "Error",
     };
