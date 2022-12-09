@@ -99,12 +99,12 @@ async function getAccountDetail(body) {
   } else {
     const query = `SELECT account.name, account.balance from account where account.id =${idUser};`;
     const result = await db.query(query);
-    if (result.rowCount !== 0){
-      return{
+    if (result.rowCount !== 0) {
+      return {
         name: result.rows[0].name,
         balance: result.rows[0].balance,
-        wallet: ''
-      }
+        wallet: "",
+      };
     }
     return {
       message: "Error",
@@ -131,11 +131,11 @@ async function createIncome(body) {
   const { amount, transactionDate, idUser, category, description, idWallet } =
     body;
 
-    if(amount <= 0 || category == '' || idWallet == ''){
-      return {
-        message: "Error",
-      };
-    }
+  if (amount <= 0 || category == "" || idWallet == "") {
+    return {
+      message: "Error",
+    };
+  }
 
   const query = `INSERT INTO income (amount, transactionDate, idUser, category, idWallet, description, transactionCategory) 
                  VALUES ('${amount}','${transactionDate}', '${idUser}','${category}','${idWallet}','${description}', 'income' ); 
@@ -162,11 +162,11 @@ async function createExpense(body) {
   const { amount, transactionDate, idUser, category, idWallet, description } =
     body;
 
-    if(amount <= 0 || category == '' || idWallet == ''){
-      return {
-        message: "Error",
-      };
-    }
+  if (amount <= 0 || category == "" || idWallet == "") {
+    return {
+      message: "Error",
+    };
+  }
 
   const query = `INSERT INTO expense (amount, transactionDate, idUser, category, idWallet, description, transactionCategory) 
                  VALUES ('${amount}','${transactionDate}', '${idUser}', '${category}','${idWallet}','${description}', 'expense' ); 
@@ -177,7 +177,7 @@ async function createExpense(body) {
   if (
     result[0].rowCount !== 0 &&
     result[1].rowCount !== 0 &&
-    result[2].rowCount !== 0 
+    result[2].rowCount !== 0
   ) {
     return {
       result,
@@ -254,7 +254,7 @@ async function getRecentTransaction(body) {
                  where income.idUser = '${idUser}' UNION
                  select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
                  expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
-                 where expense.idUser = '${idUser}' LIMIT 5 ;`;
+                 where expense.idUser = '${idUser}' ORDER BY transactiondate DESC LIMIT 5 ;`;
   console.log(query);
   const result = await db.query(query);
   if (result.rowCount !== 0) {
