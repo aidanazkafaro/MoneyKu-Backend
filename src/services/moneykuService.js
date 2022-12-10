@@ -194,7 +194,6 @@ async function getIncome(body) {
   const query = `select category.category, amount, wallet.name, transactiondate, description from income inner join wallet on 
                  income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}';`;
-  console.log(query);
   const result = await db.query(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
@@ -226,27 +225,6 @@ async function getExpense(body) {
   }
 }
 
-async function getAllTransaction(body) {
-  const { idUser, dateBefore, dateAfter } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
-                 income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
-                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' UNION
-                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
-                 expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
-                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' ;`;
-  const result = await db.query(query);
-  if (result.rowCount !== 0) {
-    const queryResult = result.rows;
-    return {
-      queryResult,
-    };
-  } else {
-    return {
-      message: "Error",
-    };
-  }
-}
-
 async function getRecentTransaction(body) {
   const idUser = body;
   const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
@@ -255,7 +233,6 @@ async function getRecentTransaction(body) {
                  select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
                  expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where expense.idUser = '${idUser}' ORDER BY transactiondate DESC LIMIT 5 ;`;
-  console.log(query);
   const result = await db.query(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
@@ -271,7 +248,31 @@ async function getRecentTransaction(body) {
 
 async function getWallet(body) {
   const { idUser } = body;
-  const query = `SELECT * FROM WALLET WHERE idUser = '${idUser}`;
+  const query = `SELECT * FROM WALLET WHERE idUser = '${idUser}'`;
+  const result = await db.query(query);
+  let emptyArray = [];
+  let queryResult = result.rows;
+  // if (result.rowCount !== 0) {
+  //   const queryResult = result.rows;
+  //   return {
+  //     queryResult,
+  //   };
+  // } else {
+  //   return {
+  //     resultRows,
+  //   };
+  // }
+  return queryResult;
+}
+
+async function getAllTransaction(body) {
+  const { idUser, dateBefore, dateAfter } = body;
+  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
+                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' UNION
+                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
+                 where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' ;`;
   const result = await db.query(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
@@ -309,7 +310,6 @@ async function getExpenseByWallet(body) {
                  expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' AND expense.idWallet ='${idWallet}' ;`;
   const result = await db.query(query);
-  console.log(result);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
     return {
@@ -358,6 +358,87 @@ async function getCategory() {
   }
 }
 
+async function getTotalIncome(body) {
+  const { iduser } = body;
+  const query = `select sum(amount) from income where iduser = '${iduser}';`;
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
+async function getTotalExpense(body) {
+  const { iduser } = body;
+  const query = `select sum(amount) from expense where iduser = '${iduser}';`;
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+async function getTotalIncomeByWallet(body) {
+  const { idwallet, dateBefore, dateAfter } = body;
+  const query = `select sum(amount) from income where idwallet = '${idwallet}' and transactiondate between '${dateBefore}' AND '${dateAfter}';`;
+  const result = await db.query(query);
+  console.log(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
+async function getTotalExpenseByWallet(body) {
+  const { idwallet, dateBefore, dateAfter } = body;
+  const query = `select sum(amount) from expense where idwallet = '${idwallet}' and transactiondate between '${dateBefore}' AND '${dateAfter}';`;
+  const result = await db.query(query);
+  console.log(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
+async function deleteWallet(body) {
+  const { id } = body;
+  const query = `delete from wallet where id = '${id}';`;
+  const result = await db.query(query);
+  if (result.rowCount !== 0) {
+    const queryResult = result.rows;
+    return {
+      queryResult,
+    };
+  } else {
+    return {
+      message: "Error",
+    };
+  }
+}
+
 module.exports = {
   register,
   login,
@@ -376,4 +457,9 @@ module.exports = {
   getAllTransactionByWallet,
   getAccountDetail,
   getCategory,
+  getTotalIncomeByWallet,
+  getTotalExpenseByWallet,
+  getTotalIncome,
+  getTotalExpense,
+  deleteWallet,
 };

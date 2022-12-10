@@ -100,7 +100,7 @@ async function getAllTransaction(req, res) {
 
 async function getWallet(req, res) {
   try {
-    const result = await moneykuService.getWallet(req.body);
+    const result = await moneykuService.getWallet(req.query);
     res.json(result);
   } catch (err) {
     res.json(err.detail);
@@ -119,6 +119,23 @@ async function getIncomeByWallet(req, res) {
 async function getExpenseByWallet(req, res) {
   try {
     const result = await moneykuService.getExpenseByWallet(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
+async function getTotalIncomeByWallet(req, res) {
+  try {
+    const result = await moneykuService.getTotalIncomeByWallet(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
+
+async function getTotalExpenseByWallet(req, res) {
+  try {
+    const result = await moneykuService.getTotalExpenseByWallet(req.query);
     res.json(result);
   } catch (err) {
     res.json(err.detail);
@@ -160,6 +177,31 @@ async function getCategory(req, res) {
     res.json(err.detail);
   }
 }
+async function getTotalIncome(req, res) {
+  try {
+    const result = await moneykuService.getTotalIncome(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
+async function getTotalExpense(req, res) {
+  try {
+    const result = await moneykuService.getTotalExpense(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
+
+async function deleteWallet(req, res) {
+  try {
+    const result = await moneykuService.deleteWallet(req.query);
+    res.json(result);
+  } catch (err) {
+    res.json(err.detail);
+  }
+}
 
 module.exports = {
   register,
@@ -178,6 +220,11 @@ module.exports = {
   getIncomeByWallet,
   getExpenseByWallet,
   getAllTransactionByWallet,
+  getTotalExpenseByWallet,
+  getTotalIncomeByWallet,
   getAccountDetail,
   getCategory,
+  getTotalIncome,
+  getTotalExpense,
+  deleteWallet,
 };

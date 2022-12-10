@@ -15,6 +15,11 @@ router.get("/getExpense", moneykuController.getExpense);
 router.get("/getAllTransaction", moneykuController.getAllTransaction);
 router.get("/getRecentTransaction", moneykuController.getRecentTransaction);
 router.get("/getWallet", moneykuController.getWallet);
+router.get("/getTotalIncomeByWallet", moneykuController.getTotalIncomeByWallet);
+router.get(
+  "/getTotalExpenseByWallet",
+  moneykuController.getTotalExpenseByWallet
+);
 router.get("/getIncomeByWallet", moneykuController.getIncomeByWallet);
 router.get("/getExpenseByWallet", moneykuController.getExpenseByWallet);
 router.get(
@@ -23,5 +28,8 @@ router.get(
 );
 router.get("/getAccountDetail", moneykuController.getAccountDetail);
 router.get("/getCategory", moneykuController.getCategory);
+router.get("/getTotalIncome", moneykuController.getTotalIncome);
+router.get("/getTotalExpense", moneykuController.getTotalExpense);
+router.delete("/deleteWallet", moneykuController.deleteWallet);
 
 module.exports = router;
