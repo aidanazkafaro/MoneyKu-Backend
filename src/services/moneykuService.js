@@ -193,8 +193,8 @@ async function createExpense(body) {
 
 async function getIncome(body) {
   const { idUser, dateBefore, dateAfter } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description from income inner join wallet on 
-                 income.idwallet = wallet.id inner join category on category.id = income.category
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description 
+                 from income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}';`;
   const result = await db.query(query);
   if (result.rowCount !== 0) {
@@ -211,8 +211,8 @@ async function getIncome(body) {
 
 async function getExpense(body) {
   const { idUser, dateBefore, dateAfter } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description from expense inner join wallet on 
-                 expense.idwallet = wallet.id inner join category on category.id = expense.category
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, 
+                 description from expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' ;`;
   const result = await db.query(query);
   if (result.rowCount !== 0) {
@@ -229,10 +229,10 @@ async function getExpense(body) {
 
 async function getRecentTransaction(body) {
   const idUser = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description, transactionCategory from 
                  income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
                  where income.idUser = '${idUser}' UNION
-                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description, transactionCategory from 
                  expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where expense.idUser = '${idUser}' ORDER BY transactiondate DESC LIMIT 5 ;`;
   const result = await db.query(query);
@@ -269,10 +269,10 @@ async function getWallet(body) {
 
 async function getAllTransaction(body) {
   const { idUser, dateBefore, dateAfter } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description, transactionCategory from 
                  income inner join wallet on income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' UNION
-                 select category.category, amount, wallet.name, transactiondate, description, transactionCategory from 
+                 select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description, transactionCategory from 
                  expense inner join wallet on expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' ;`;
   const result = await db.query(query);
@@ -290,7 +290,7 @@ async function getAllTransaction(body) {
 
 async function getIncomeByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description from income inner join wallet on 
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description from income inner join wallet on 
                  income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND income.idWallet ='${idWallet}' ;`;
   const result = await db.query(query);
@@ -308,7 +308,7 @@ async function getIncomeByWallet(body) {
 
 async function getExpenseByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description from expense inner join wallet on 
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description from expense inner join wallet on 
                  expense.idwallet = wallet.id inner join category on category.id = expense.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND expense.idUser = '${idUser}' AND expense.idWallet ='${idWallet}' ;`;
   const result = await db.query(query);
@@ -326,7 +326,7 @@ async function getExpenseByWallet(body) {
 
 async function getAllTransactionByWallet(body) {
   const { idUser, dateBefore, dateAfter, idWallet } = body;
-  const query = `select category.category, amount, wallet.name, transactiondate, description, transactionCategory from income inner join wallet on 
+  const query = `select category.category, amount, wallet.name, TO_CHAR(transactiondate, 'YYYY-MM-DD') as transactiondate, description, transactionCategory from income inner join wallet on 
                  income.idwallet = wallet.id inner join category on category.id = income.category
                  where transactionDate between '${dateBefore}' AND '${dateAfter}' AND income.idUser = '${idUser}' AND income.idWallet ='${idWallet}' UNION
                  select category.category, amount, wallet.name, transactiondate, description, transactionCategory from expense inner join wallet on 
