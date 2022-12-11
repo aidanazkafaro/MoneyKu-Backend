@@ -85,7 +85,7 @@ async function createIncomeCategory(body) {
 
 async function getAccountDetail(body) {
   const idUser = body;
-  const query = `SELECT account.name, account.balance from account where account.id =${idUser};
+  const query = `SELECT account.name, account.balance, account.email from account where account.id =${idUser};
 
                  SELECT wallet.id as idWallet, wallet.name as nameWallet, wallet.balance as balanceWallet
                  from account inner join wallet on wallet.idUser = account.id where wallet.idUser =${idUser};`;
@@ -93,15 +93,17 @@ async function getAccountDetail(body) {
   if (result[0].rowCount !== 0 && result[1].rowCount !== 0) {
     return {
       name: result[0].rows[0].name,
+      email: result[0].rows[0].email,
       balance: result[0].rows[0].balance,
       wallet: result[1].rows,
     };
   } else {
-    const query = `SELECT account.name, account.balance from account where account.id =${idUser};`;
+    const query = `SELECT account.name, account.email, account.balance from account where account.id =${idUser};`;
     const result = await db.query(query);
     if (result.rowCount !== 0) {
       return {
         name: result.rows[0].name,
+        email: result.rows[0].email,
         balance: result.rows[0].balance,
         wallet: "",
       };
@@ -393,7 +395,6 @@ async function getTotalIncomeByWallet(body) {
   const { idwallet, dateBefore, dateAfter } = body;
   const query = `select sum(amount) from income where idwallet = '${idwallet}' and transactiondate between '${dateBefore}' AND '${dateAfter}';`;
   const result = await db.query(query);
-  console.log(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
     return {
@@ -410,7 +411,6 @@ async function getTotalExpenseByWallet(body) {
   const { idwallet, dateBefore, dateAfter } = body;
   const query = `select sum(amount) from expense where idwallet = '${idwallet}' and transactiondate between '${dateBefore}' AND '${dateAfter}';`;
   const result = await db.query(query);
-  console.log(query);
   if (result.rowCount !== 0) {
     const queryResult = result.rows;
     return {
